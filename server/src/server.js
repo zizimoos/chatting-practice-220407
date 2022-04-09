@@ -21,10 +21,17 @@ io.on("connection", (socket) => {
   console.log(`🔗 User connected id: ${socket.id}`);
 
   socket.on("join_room", ({ userName, room }) => {
-    console.log(`🔗 User ${userName} joined room ${room} id: ${socket.id}`);
     socket.join(room);
     socket.emit("joined_room", { userName, room });
     socket.broadcast.to(room).emit("user_joined", { userName, room });
+  });
+
+  socket.on("send_message", ({ userName, room, message, time }) => {
+    socket.broadcast.to(room).emit("receive_message", {
+      userName,
+      message,
+      time,
+    });
   });
 
   socket.on("disconnect", () => {

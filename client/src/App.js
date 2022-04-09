@@ -18,28 +18,35 @@ const Input = styled.input``;
 function App() {
   const [userName, setUserName] = useState("");
   const [room, setRoom] = useState("");
+  const [join, setJoin] = useState(false);
 
   const joinRoom = () => {
     if (userName && room) {
       socket.emit("join_room", { userName, room });
+      setJoin(true);
     }
   };
 
   return (
     <Container>
-      <h1>Hello World</h1>
-      <Input
-        type="text"
-        placeholder="yourname"
-        onChange={(e) => setUserName(e.currentTarget.value)}
-      ></Input>
-      <Input
-        type="text"
-        placeholder="roomNumber"
-        onChange={(e) => setRoom(e.currentTarget.value)}
-      ></Input>
-      <button onClick={joinRoom}>Join a Room</button>
-      <Chat socket={socket} userName={userName} room={room}></Chat>
+      {!join ? (
+        <>
+          <h1>Hello World</h1>
+          <Input
+            type="text"
+            placeholder="yourname"
+            onChange={(e) => setUserName(e.currentTarget.value)}
+          ></Input>
+          <Input
+            type="text"
+            placeholder="roomNumber"
+            onChange={(e) => setRoom(e.currentTarget.value)}
+          ></Input>
+          <button onClick={joinRoom}>Join a Room</button>
+        </>
+      ) : (
+        <Chat socket={socket} userName={userName} room={room}></Chat>
+      )}
     </Container>
   );
 }
