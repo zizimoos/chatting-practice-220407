@@ -15,7 +15,7 @@ function Chat({ socket, userName, room }) {
   const [messageList, setMessageList] = useState([]);
   const sendMessage = async () => {
     if (message !== "") {
-      const data = {
+      const MessageData = {
         userName,
         room,
         message,
@@ -26,18 +26,19 @@ function Chat({ socket, userName, room }) {
           ":" +
           String(new Date(Date.now()).getSeconds()).padStart(2, "0"),
       };
+      await socket.emit("send_message", MessageData);
+      setMessageList((list) => [...list, MessageData]);
       setMessage("");
-      await socket.emit("send_message", data);
-      setMessageList((messageList) => [...messageList, data]);
     }
   };
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
-      setMessageList([...messageList, data]);
+      console.log("EFFECT", data);
+      setMessageList((list) => [...list, data]);
     });
   }, [socket]);
-  console.log(messageList);
+
   return (
     <>
       <ChatHeader>
