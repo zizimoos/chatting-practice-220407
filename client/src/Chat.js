@@ -14,25 +14,27 @@ function Chat({ socket, userName, room }) {
   const [message, setMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
   const sendMessage = async () => {
-    if (message) {
-      await socket.emit("send_message", {
+    if (message !== "") {
+      const data = {
         userName,
         room,
         message,
         time:
-          new Date(Date.now()).getHours() +
+          String(new Date(Date.now()).getHours()).padStart(2, "0") +
           ":" +
-          new Date(Date.now()).getMinutes() +
+          String(new Date(Date.now()).getMinutes()).padStart(2, "0") +
           ":" +
-          new Date(Date.now()).getSeconds(),
-      });
+          String(new Date(Date.now()).getSeconds()).padStart(2, "0"),
+      };
       setMessage("");
+      await socket.emit("send_message", data);
+      setMessageList((messageList) => [...messageList, data]);
     }
   };
 
   useEffect(() => {
-    socket.on("receive_message", ({ userName, message, time }) => {
-      setMessageList((current) => [...current, { userName, message, time }]);
+    socket.on("receive_message", (data) => {
+      setMessageList([...messageList, data]);
     });
   }, [socket]);
   console.log(messageList);
@@ -52,10 +54,9 @@ function Chat({ socket, userName, room }) {
       </ChatBody>
       <ChatFooter>
         <Input
-          value={message}
           type="text"
           placeholder="write your message..."
-          onChange={(e) => setMessage(e.currentTarget.value)}
+          onChange={(e) => setMessage(e.target.value)}
         ></Input>
         <button onClick={sendMessage}>&#9658;</button>
       </ChatFooter>

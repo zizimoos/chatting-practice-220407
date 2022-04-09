@@ -21,7 +21,7 @@ function App() {
   const [join, setJoin] = useState(false);
 
   const joinRoom = () => {
-    if (userName && room) {
+    if (userName !== "" && room !== "") {
       socket.emit("join_room", { userName, room });
       setJoin(true);
     }

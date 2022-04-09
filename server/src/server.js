@@ -26,12 +26,8 @@ io.on("connection", (socket) => {
     socket.broadcast.to(room).emit("user_joined", { userName, room });
   });
 
-  socket.on("send_message", ({ userName, room, message, time }) => {
-    socket.broadcast.to(room).emit("receive_message", {
-      userName,
-      message,
-      time,
-    });
+  socket.on("send_message", (data) => {
+    socket.broadcast.to(data.room).emit("receive_message", data);
   });
 
   socket.on("disconnect", () => {
