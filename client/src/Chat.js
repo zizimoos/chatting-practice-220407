@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import ScrollToBottom from "react-scroll-to-bottom";
 
 const ChatHeader = styled.div``;
 const ChatBody = styled.div`
   width: 360px;
   height: 500px;
-  background-color: #f5f5f5;
+  background-color: mistyRose;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  border: 4px solid chocolate;
 `;
 const ChatFooter = styled.div``;
 const Input = styled.input``;
@@ -29,6 +34,7 @@ function Chat({ socket, userName, room }) {
       await socket.emit("send_message", MessageData);
       setMessageList((list) => [...list, MessageData]);
       setMessage("");
+      console.log("sendMessage");
     }
   };
 
@@ -45,17 +51,20 @@ function Chat({ socket, userName, room }) {
         <p>Live Chat</p>
       </ChatHeader>
       <ChatBody>
-        {messageList.map((m, index) => (
-          <div key={index}>
-            <p>{m.userName}</p>
-            <p>{m.message}</p>
-            <p>{m.time}</p>
-          </div>
-        ))}
+        <ScrollToBottom>
+          {messageList.map((m, index) => (
+            <div key={index}>
+              <p>{m.userName}</p>
+              <p>{m.message}</p>
+              <p>{m.time}</p>
+            </div>
+          ))}
+        </ScrollToBottom>
       </ChatBody>
       <ChatFooter>
         <Input
           type="text"
+          value={message}
           placeholder="write your message..."
           onChange={(e) => setMessage(e.target.value)}
         ></Input>
