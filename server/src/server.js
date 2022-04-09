@@ -16,3 +16,18 @@ const io = new Server(server, {
 server.listen(3003, () => {
   console.log(" ✅ Server is running on port 3003");
 });
+
+io.on("connection", (socket) => {
+  console.log(`🔗 User connected id: ${socket.id}`);
+
+  socket.on("join_room", ({ userName, room }) => {
+    console.log(`🔗 User ${userName} joined room ${room} id: ${socket.id}`);
+    socket.join(room);
+    socket.emit("joined_room", { userName, room });
+    socket.broadcast.to(room).emit("user_joined", { userName, room });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("🔗 User disconnected", socket.id);
+  });
+});
